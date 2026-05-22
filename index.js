@@ -1,6 +1,18 @@
 require("dotenv").config();
+
 process.on("uncaughtException", console.error);
 process.on("unhandledRejection", console.error);
+
+const express = require("express");
+const app = express();
+
+app.get("/", (req, res) => {
+  res.send("Bot is running");
+});
+
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
+});
 
 const {
   Client,
@@ -13,18 +25,12 @@ const {
   ChannelType
 } = require("discord.js");
 
-const express = require("express");
-const app = express();
-
-app.get("/", (req, res) => res.send("Bot is running"));
-app.listen(3000, () => console.log("Server running"));
-
 const config = {
   categories: {
-    support: "1506020715625713844",
-    orders: "1506046196806844547",
-    info: "1506019269341745345",
-    problem: "1506020214729605250"
+    support: "PUT_CATEGORY_ID_1",
+    orders: "PUT_CATEGORY_ID_2",
+    info: "PUT_CATEGORY_ID_3",
+    problem: "PUT_CATEGORY_ID_4"
   }
 };
 
@@ -60,7 +66,7 @@ client.on("messageCreate", async (message) => {
 
 client.on("interactionCreate", async (interaction) => {
 
-  // فتح التذكرة
+  // فتح تذكرة
   if (interaction.isButton() && interaction.customId === "open_ticket") {
 
     const channel = await interaction.guild.channels.create({
@@ -88,7 +94,7 @@ client.on("interactionCreate", async (interaction) => {
         .setStyle(ButtonStyle.Secondary)
     );
 
-    channel.send({
+    await channel.send({
       content: "تم فتح التذكرة 🎫",
       components: [row]
     });
@@ -118,7 +124,7 @@ client.on("interactionCreate", async (interaction) => {
     });
   }
 
-  // نقل التذكرة وتغيير نوعها
+  // نقل التذكرة وتغيير القسم
   if (interaction.isStringSelectMenu() && interaction.customId === "select_category") {
 
     const type = interaction.values[0];
